@@ -1,6 +1,6 @@
 # AI Projects
 
-### 電腦視覺專案 (Yolo, OpenCV)  
+## 電腦視覺專案 (Yolo, OpenCV)  
 #### -車流量監視 - Project-Car_counter  
       說明：辨識馬路之汽車，並計算車流量。
      
@@ -22,7 +22,7 @@
    ![image](https://raw.githubusercontent.com/dv106alan/AI_projects/main/Computer_Vision/Project-PokerHand_detector/poker_detect.png)  
   
   
-### 模型建立專案  
+## 模型建立專案  
 #### -MNIST模型：  
       使用Keras建立多層神經網路，並做訓練測試及優化。  
 #### -Cifar圖片辨識模型：  
