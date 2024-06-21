@@ -61,7 +61,7 @@ Non-trainable params: 0
 
 - 建立Dataset資料集
 將資料來源以亂數洗牌，再將其區分為Train, Val, Test資料集
-- 建立CNN模型, 損失函數使用CrossEntropy, 優化器選擇Adam(lr0.001), 及建立transfrom(224*224, 標準化)
+- 建立CNN模型, 損失函數使用CrossEntropy, 優化器選擇Adam(0.001), 及建立transfrom(224*224, 標準化)
 - 建立Dataloader, 批次量為32
 - 將資料及模型置於GPU中執行
 - 編輯訓練模型程序，訓練5回合，並計算損失，並顯示結果
@@ -74,12 +74,12 @@ Non-trainable params: 0
   Epoch [5/5], Train Loss: 0.1487, Val Loss: 2.3650
   Training completed!
   ```
-  訓練完成後可以看到Val的損失未持續下降，判斷此模型太小可學習之權重太少，無法有效學習特徵
+  訓練完成後可以看到Validation的損失未持續下降，判斷此模型太小可學習之權重太少，無法有效學習特徵
   ![image](https://raw.githubusercontent.com/dv106alan/AI_projects/main/Kaggle_Projects/Waste_Classification/png/cnn_output.png)  
   在test資料集中隨機抽取9張圖片進行預測，可看見有6張預測正確，3張不正確，其準確率為0.67  
   ![image](https://raw.githubusercontent.com/dv106alan/AI_projects/main/Kaggle_Projects/Waste_Classification/png/cnn_test.png)  
 - 將模型置換為ResNet，這裡使用ResNet50(深度殘差網路)  
-- 建立ResNet50模型, 損失函數使用CrossEntropy, 優化器選擇Adam(lr0.001), 及建立transfrom(224*224, 標準化, 隨機翻轉30度)  
+- 建立ResNet50模型, 損失函數使用CrossEntropy, 優化器選擇Adam(0.001), 及建立transfrom(224*224, 標準化, 隨機翻轉30度)  
 - 將模型設為預設權重(IMAGENET1K_V2)，訓練fc層之權重，其餘權重凍結
 - 將資料及模型置於GPU中執行
 - 編輯訓練模型程序，訓練5回合，並計算損失，並顯示結果
@@ -92,13 +92,13 @@ Non-trainable params: 0
   Epoch [5/5], Train Loss: 0.6787, Val Loss: 0.6765
   Training completed!
   ```
-  可看出訓練損失集validation損失一並下降，並且有持續下降趨勢，顯示此模型持續進行訓練後可以有更好得表現。  
+  可看出訓練損失集validation損失一起下降，並且有持續下降趨勢，顯示此模型持續進行訓練後可以有更好得表現。  
   ![image](https://raw.githubusercontent.com/dv106alan/AI_projects/main/Kaggle_Projects/Waste_Classification/png/resnet_output.png)  
   在test資料集中隨機抽取9張圖片進行預測，可看見有8張預測正確，1張不正確，其準確率為0.89，準確率明顯提升  
   ![image](https://raw.githubusercontent.com/dv106alan/AI_projects/main/Kaggle_Projects/Waste_Classification/png/resnet_test.png)
 
 ### Conclution  
-一開始使用CNN模型訓練，效果並不好，於是將模型置換成更為複雜之模型並作遷移訓練，準確率明顯提升(準確率0.67->0.88)。  
+一開始使用CNN模型訓練，效果並不好，於是將模型置換成更為複雜之模型並做訓練，準確率明顯提升(準確率0.67->0.88)。  
 在此研判是因為資料來源種類眾多(30種)，並且每一種類之圖片特徵之差異也較大，故需要更複雜的模型進行學習。  
 ResNet50需要較長的訓練時間，故此作遷移學習只訓練部分權重可節省訓練時間，也可達到準確率提升之效果。  
 
