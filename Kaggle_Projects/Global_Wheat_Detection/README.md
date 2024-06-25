@@ -1,6 +1,5 @@
-## 廢棄物分類模型 (Waste_Classification)  
-Data source：Alistair King，www.kaggle.com/datasets/alistairking/recyclable-and-household-waste-classification  
-使用GPU T4 x2
+## 全球小麥檢測模型 (Global Wheat Detection)  
+Data source：Etienne David, Ian Stavness, Maggie, Phil Culliton. (2020). Global Wheat Detection . Kaggle. https://kaggle.com/competitions/global-wheat-detection
   
 開發用於可回收垃圾及生活垃圾分類的機器學習模型-  
 分析不同廢棄物材料的視覺特徵，比較預設和預設情況下廢棄物分類演算法的性能  
