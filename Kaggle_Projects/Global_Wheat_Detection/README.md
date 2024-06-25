@@ -1,34 +1,15 @@
 ## 全球小麥檢測模型 (Global Wheat Detection)  
 Data source：Etienne David, Ian Stavness, Maggie, Phil Culliton. (2020). Global Wheat Detection . Kaggle. https://kaggle.com/competitions/global-wheat-detection
   
-開發用於可回收垃圾及生活垃圾分類的機器學習模型-  
+使用影像分析來幫助辨識小麥頭-  
 分析不同廢棄物材料的視覺特徵，比較預設和預設情況下廢棄物分類演算法的性能  
 
 
 ### Model
-此專案使用Pytorch建立模型，分別使用CNN及ResNet建立模型，並比較兩者差異。  
-#### CNN模型結構: 使用兩層卷積層(3X3,3C)
+此專案使用Pytorch建立模型，建立FastRCNN模型並做訓練。  
 ```
-----------------------------------------------------------------
-        Layer (type)               Output Shape         Param #
-================================================================
-            Conv2d-1         [-1, 32, 224, 224]             896
-              ReLU-2         [-1, 32, 224, 224]               0
-         MaxPool2d-3         [-1, 32, 112, 112]               0
-            Conv2d-4         [-1, 64, 112, 112]          18,496
-              ReLU-5         [-1, 64, 112, 112]               0
-         MaxPool2d-6           [-1, 64, 56, 56]               0
-            Linear-7                  [-1, 512]     102,760,960
-              ReLU-8                  [-1, 512]               0
-            Linear-9                   [-1, 30]          15,390
-================================================================
-Total params: 102,795,742
-Trainable params: 102,795,742
-Non-trainable params: 0
-----------------------------------------------------------------
-```
-#### ResNet: 使用ResNet50模型進行遷移訓練
-指定預設權重IMAGENET1K_V2，只訓練fc層之權重，其餘凍結
+#### FastRCNN: 使用FastRCNN模型進行遷移訓練
+指定預設權重COCO_V1
 ```
 ----------------------------------------------------------------
         Layer (type)               Output Shape         Param #
