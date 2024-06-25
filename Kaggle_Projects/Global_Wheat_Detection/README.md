@@ -1,29 +1,52 @@
-## 全球小麥檢測模型 (Global Wheat Detection)  
+## 全球小麥偵測 (Global Wheat Detection)  
 Data source：Etienne David, Ian Stavness, Maggie, Phil Culliton. (2020). Global Wheat Detection . Kaggle. https://kaggle.com/competitions/global-wheat-detection
   
-使用影像分析來幫助辨識小麥頭-  
-分析不同廢棄物材料的視覺特徵，比較預設和預設情況下廢棄物分類演算法的性能  
-
+使用影像分析來幫助辨識小麥-  
+分析全球不同品種的小麥圖片，訓練一個可以辨識不同品種之小麥頭的模型，並加以標記  
 
 ### Model
-此專案使用Pytorch建立模型，建立FastRCNN模型並做訓練。  
+此專案使用Pytorch建立模型，運用torchvision中的FasterRCNN模型做訓練。  
+#### FasterRCNN_ResNet50: 使用FasterRCNN_ResNet50模型進行訓練  
+指定預設權重COCO_V1，提取需要訓練之權重進行訓練  
+使用ResNet50 backbone  
 ```
-#### FastRCNN: 使用FastRCNN模型進行遷移訓練
-指定預設權重COCO_V1
-```
-----------------------------------------------------------------
-        Layer (type)               Output Shape         Param #
-================================================================
-            Conv2d-1         [-1, 64, 112, 112]           9,408
-            Conv2d-2         [-1, 64, 112, 112]           9,408
-       BatchNorm2d-3         [-1, 64, 112, 112]             128
-              ReLU-4         [-1, 64, 112, 112]               0
-         MaxPool2d-5           [-1, 64, 56, 56]               0
-       BatchNorm2d-6         [-1, 64, 112, 112]             128
-              ReLU-7         [-1, 64, 112, 112]               0
-            Conv2d-8           [-1, 64, 56, 56]           4,096
-         MaxPool2d-9           [-1, 64, 56, 56]               0
-...
+===========================================================================
+Layer (type:depth-idx)                             Param #
+===========================================================================
+├─GeneralizedRCNNTransform: 1-1                    --
+├─BackboneWithFPN: 1-2                             --
+|    └─IntermediateLayerGetter: 2-1                --
+|    |    └─Conv2d: 3-1                            (9,408)
+|    |    └─FrozenBatchNorm2d: 3-2                 --
+|    |    └─ReLU: 3-3                              --
+|    |    └─MaxPool2d: 3-4                         --
+|    |    └─Sequential: 3-5                        (212,992)
+|    |    └─Sequential: 3-6                        1,212,416
+|    |    └─Sequential: 3-7                        7,077,888
+|    |    └─Sequential: 3-8                        14,942,208
+|    └─FeaturePyramidNetwork: 2-2                  --
+|    |    └─ModuleList: 3-9                        984,064
+|    |    └─ModuleList: 3-10                       2,360,320
+|    |    └─LastLevelMaxPool: 3-11                 --
+├─RegionProposalNetwork: 1-3                       --
+|    └─AnchorGenerator: 2-3                        --
+|    └─RPNHead: 2-4                                --
+|    |    └─Sequential: 3-12                       590,080
+|    |    └─Conv2d: 3-13                           771
+|    |    └─Conv2d: 3-14                           3,084
+├─RoIHeads: 1-4                                    --
+|    └─MultiScaleRoIAlign: 2-5                     --
+|    └─TwoMLPHead: 2-6                             --
+|    |    └─Linear: 3-15                           12,846,080
+|    |    └─Linear: 3-16                           1,049,600
+|    └─FastRCNNPredictor: 2-7                      --
+|    |    └─Linear: 3-17                           2,050
+|    |    └─Linear: 3-18                           8,200
+===========================================================================
+Total params: 41,299,161
+Trainable params: 41,076,761
+Non-trainable params: 222,400
+===========================================================================
 ```
 
 ### Dataset  
