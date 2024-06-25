@@ -50,51 +50,46 @@ Non-trainable params: 222,400
 ```
 
 ### Dataset  
-該資料集包含 15,000 張圖像（每張 256x256 像素）的綜合集合，描繪了 30 個不同類別的各種可回收材料、一般廢物和家居用品。此資料集每個類別 500 張影像，
-每個子類別 250 張影像。  
-該資料集涵蓋廢棄物類別和項目，包括：  
-- 塑膠：此類別包括塑膠水瓶、汽水瓶、清潔劑瓶、購物袋、垃圾袋、食物容器、一次性餐具、吸管和杯蓋的圖像。
-- 紙張和紙板：此類別包括報紙、辦公用紙、雜誌、紙箱和紙板包裝的圖像。
-- 玻璃：此類別包括玻璃製成的飲料瓶、食品罐和化妝品容器的圖像。
-- 金屬：此類別包括鋁製汽水罐、鋁製食品罐、鋼製食品罐和氣霧罐的圖像。
-- 有機垃圾：此類別包括食物垃圾的圖像，例如皮、蔬菜殘渣、蛋殼、咖啡渣和茶袋。
-- 紡織品：此類別包括服裝和鞋子的圖像。
+全球小麥資料集包含張高分辨率 RGB 圖像和 190,000 個標記的小麥頭，這些小麥頭是從世界上多個國家收集的，處於不同生長階段，具有廣泛的基因型。  
+- 資料內容  
+  - 圖像類型：高解析度的 RGB 圖像。  
+  - 標記：約 190,000 個小麥頭標記。  
+  - 收集來源：來自世界各地多個國家，包括不同生長階段和基因型的小麥植物。  
+  - 收集方式：基於戶外圖像的小麥頭檢測。  
+- 訓練資料集  
+  - 覆蓋區域：主要來自歐洲（法國、英國、瑞士）和北美（加拿大）的 3,000 多張圖像。  
+  - 用途：用於開發通用解決方案，估計小麥穗的數量和大小。  
+- 測試資料集  
+  - 覆蓋區域：包括來自澳洲、日本和中國的約 1000 張圖像。  
+  - 用途：用於評估模型在不同基因型、環境和觀察條件下的性能。  
+
 
 ### Execution  
-
-- 建立Dataset資料集
-將資料來源以亂數洗牌，再將其區分為Train, Val, Test資料集
-- 建立CNN模型, 損失函數使用CrossEntropy, 優化器選擇Adam(0.001), 及建立transfrom(224*224, 標準化)
-- 建立Dataloader, 批次量為32
+- 建立Dataset資料集, 提取CSV資料後加入座標資料
+  建立小麥資料集，將圖片,標記座標,及ID等資料加入資料集中
+- 建立CNN模型
+  損失函數使用自建函數Averager(累計損失並做平均)
+  優化器使用隨機梯度下降SGD，學習率0.005, 動量0.9, 權重衰減0.0005
+  使用albumentations函式庫建立transfrom函式，這裡只使用翻轉
+- 建立Dataloader, 將Dataset輸出之資料進行組合, 將批次量設為16
+- 取出資料並查看標注是否正確
+  ![image]() 
 - 將資料及模型置於GPU中執行
-- 編輯訓練模型程序，訓練5回合，並計算損失，並顯示結果
+- 編輯訓練模型程序，訓練2回合
+  將每張Image及Target輸入模型進行前向傳播，將其損失加總並傳入損失函數中
+  將損失計算結果進行反向傳播，並使用優化器更新權重
   ```
-  Start Training!
-  Epoch [1/5], Train Loss: 3.0650, Val Loss: 2.5112
-  Epoch [2/5], Train Loss: 1.7162, Val Loss: 1.9072
-  Epoch [3/5], Train Loss: 0.5564, Val Loss: 2.1190
-  Epoch [4/5], Train Loss: 0.2452, Val Loss: 2.2983
-  Epoch [5/5], Train Loss: 0.1487, Val Loss: 2.3650
-  Training completed!
+  Iteration #50 train loss: 1.0150204827105964
+  Iteration #100 train loss: 0.7746749724493439
+  Iteration #150 train loss: 0.779301008184453
+  Epoch #0 train loss: 0.8755133863481356
+  Iteration #200 train loss: 0.8922283283979564
+  Iteration #250 train loss: 0.8761128209147222
+  Iteration #300 train loss: 0.7208498736836595
+  Epoch #1 train loss: 0.8604924928866472
   ```
-  訓練完成後可以看到Validation的損失未持續下降，判斷此模型太小可學習之權重太少，無法有效學習特徵
-  ![image](https://raw.githubusercontent.com/dv106alan/AI_projects/main/Kaggle_Projects/Waste_Classification/png/cnn_output.png)  
-  在test資料集中隨機抽取9張圖片進行預測，可看見有6張預測正確，3張不正確，其準確率為0.67  
-  ![image](https://raw.githubusercontent.com/dv106alan/AI_projects/main/Kaggle_Projects/Waste_Classification/png/cnn_test.png)  
-- 將模型置換為ResNet，這裡使用ResNet50(深度殘差網路)  
-- 建立ResNet50模型, 損失函數使用CrossEntropy, 優化器選擇Adam(0.001), 及建立transfrom(224*224, 標準化, 隨機翻轉30度)  
-- 將模型設為預設權重(IMAGENET1K_V2)，訓練fc層之權重，其餘權重凍結
-- 將資料及模型置於GPU中執行
-- 編輯訓練模型程序，訓練5回合，並計算損失，並顯示結果
-  ```
-  Start ResNet50 Training!
-  Epoch [1/5], Train Loss: 1.1894, Val Loss: 0.9468
-  Epoch [2/5], Train Loss: 0.9375, Val Loss: 0.8151
-  Epoch [3/5], Train Loss: 0.8189, Val Loss: 0.7297
-  Epoch [4/5], Train Loss: 0.7420, Val Loss: 0.7172
-  Epoch [5/5], Train Loss: 0.6787, Val Loss: 0.6765
-  Training completed!
-  ```
+  訓練完成後可以看到損失值為0.86，測試將其繼續訓練也無法有效下降，故此為此參數設計之極限
+- 將測試圖片資料載入，使用訓練好的模型參數進行預測，輸出結果如下
   可看出訓練損失集validation損失一起下降，並且有持續下降趨勢，顯示此模型持續進行訓練後可以有更好得表現。  
   ![image](https://raw.githubusercontent.com/dv106alan/AI_projects/main/Kaggle_Projects/Waste_Classification/png/resnet_output.png)  
   在test資料集中隨機抽取9張圖片進行預測，可看見有8張預測正確，1張不正確，其準確率為0.89，準確率明顯提升  
