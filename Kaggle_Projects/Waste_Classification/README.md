@@ -4,10 +4,11 @@ Data source：Alistair King，www.kaggle.com/datasets/alistairking/recyclable-an
   
 開發用於可回收垃圾及生活垃圾分類的機器學習模型-  
 分析不同廢棄物材料的視覺特徵，比較預設和預設情況下廢棄物分類演算法的性能  
+分別使用CNN及ResNet建立模型，並比較兩者差異。
 
 
 ### Model
-此專案使用Pytorch建立模型，分別使用CNN及ResNet建立模型，並比較兩者差異。  
+此專案使用Pytorch建立模型，分別為CNN及ResNet50。  
 #### CNN模型結構: 使用兩層卷積層(3X3,3C)
 ```
 ----------------------------------------------------------------
@@ -77,7 +78,8 @@ Non-trainable params: 0
   訓練完成後可以看到Validation的損失未持續下降，判斷此模型太小可學習之權重太少，無法有效學習特徵
   ![image](https://raw.githubusercontent.com/dv106alan/AI_projects/main/Kaggle_Projects/Waste_Classification/png/cnn_output.png)  
   在test資料集中隨機抽取9張圖片進行預測，可看見有6張預測正確，3張不正確，其準確率為0.67  
-  ![image](https://raw.githubusercontent.com/dv106alan/AI_projects/main/Kaggle_Projects/Waste_Classification/png/cnn_test.png)  
+  ![image](https://raw.githubusercontent.com/dv106alan/AI_projects/main/Kaggle_Projects/Waste_Classification/png/cnn_test.png)
+  #### 使用遷移學習訓練模型
 - 將模型置換為ResNet，這裡使用ResNet50(深度殘差網路)  
 - 建立ResNet50模型, 損失函數使用CrossEntropy, 優化器選擇Adam(0.001), 及建立transfrom(224*224, 標準化, 隨機翻轉30度)  
 - 將模型設為預設權重(IMAGENET1K_V2)，訓練fc層之權重，其餘權重凍結
