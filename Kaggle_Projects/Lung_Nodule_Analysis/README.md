@@ -1,0 +1,23 @@
+## 肺結節分析 (Lung Nodule Analysis)  
+Reference：Deep Learning with PyTorch, Eli Stevens, Luca Antiga, and Thomas Viehmann  
+Data Source：https://luna16.grand-challenge.org/  
+此專案是參照Deep Learning with PyTorch之LUNA分析專案，將此專案實做於Kaggle平台上，並做模型訓練及分析。
+
+#### 專案內容
+此專案主要目的是要從CT掃描圖片中，辨識出肺結節並加以分析是否為癌化結節。  
+
+本專案將作業切分為四個部分，分別為：
+- 肺結節分類 ()
+- 結節偵測並做影像切割 ()
+- 惡性結節分類 ()
+- 整合模型並分析 ()
+
+#### LUNA Grand Challenge 簡介
+肺癌是全球癌症相關死亡的主要原因。美國的國家肺癌篩查試驗（NLST）顯示，對於高風險人群，使用年度低劑量電腦斷層掃描（CT）進行肺癌篩查比使用年度胸部X光篩查能降低20%的肺癌死亡率。2013年，美國預防服務工作組（USPSTF）對高風險人群的低劑量CT篩查給予B級推薦，2015年初，美國醫療保險和醫療補助服務中心（CMS）批准了對醫療保險受益者的CT肺癌篩查。隨著這些發展，使用低劑量CT的肺癌篩查計劃正在美國和其他國家實施。當篩查大規模實施時，計算機輔助檢測（CAD）對肺結節的檢測可能發揮重要作用。  
+  
+大型評估研究對不同先進CAD(Computer-aided detection)系統的性能進行調查較少。因此，我們使用大型公開的LIDC-IDRI數據集組織了一個新穎的CAD檢測挑戰。挑戰的詳細描述現在已在本文中提供。我們認為這個挑戰對於可靠地比較CAD算法以及鼓勵使用先進計算機視覺技術開發新算法具有重要意義。  
+
+
+
+
+
