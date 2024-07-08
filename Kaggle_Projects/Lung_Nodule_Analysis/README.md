@@ -25,6 +25,8 @@ Data Source：https://luna16.grand-challenge.org/
 
 ## 程式說明 - 肺結節分類
 
+- Core: GPU T4 x2
+    
 程式項目內容：
 <details>
 <summary>程式項目內容說明</summary>
@@ -127,14 +129,32 @@ Data Source：https://luna16.grand-challenge.org/
   Params size (MB): 0.85
   Estimated Total Size (MB): 27.09
   ----------------------------------------------------------------
-  ```
-- 訓練模型
-  
-  此訓練批次大小為32，一次訓練輸入32筆資料，並做資料平衡及強化資料多變性。
-  初始化模型
-  
-  在訓練之前預先將訓練快取資料存入硬碟空間。
+  ```  
+- 訓練模型  
+    
+  此訓練**批次大小為32**，一次訓練輸入32筆資料，並做資料平衡及強化資料多變性。  
+  建立**初始化模型**(LunaModel)及**優化器(GCD)**，並將Model放置(平行)於GPU*2上。  
+  建立**DataLoader**，包含訓練資料(train_dl)及驗證資料(val_dl)。  
+  建立損失函數，這裡使用**交叉熵損失函數**，並使其返回每個樣本的損失值，  
+  將模型輸出之logits及資料Label輸入**計算損失**，並回傳損失。  
+  將損失進行**反向傳播**，再使用優化器計算梯度**更新模型參數**(weights,bias)。  
+  訓練設定為每5次訓練進行一次驗證。  
+  反覆迭代周期，完成模型訓練。  
+    
+  訓練使用**Tensorboard**來記錄訓練資訊，訓練資訊內容如下：  
+  **損失**：loss/all, loss/neg, loss/pos  
+  **準確率**：correct/all, correct/neg, correct/pos  
+  **預測**：pr/precision(準確率), pr/recall(招回率)  
+  **F1 score**: pr/f1_score, 公式為 2*(precision*recall)/(precision+recall)  
+  F1分數介於0～1之間，越大表示分類模型表現越好。  
+  這裡我們需要準確率及招回率皆上升才判定為良好模型。  
+    
+  這裡我們建立一個評估函數，使其可再輸入資料中評估及紀錄執行時間(enumerateWithEstimate)。  
+  在訓練之前預先將快取訓練資料存入硬碟空間中，以加速訓練速度，並減少記憶體使用率。  
+    
+- 訓練結果  
 
+  
 
 
 
