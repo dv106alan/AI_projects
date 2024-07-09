@@ -149,11 +149,41 @@ Data Source：https://luna16.grand-challenge.org/
   F1分數介於0～1之間，越大表示分類模型表現越好。  
   這裡我們需要準確率及招回率皆上升才判定為良好模型。  
     
-  這裡我們建立一個評估函數，使其可再輸入資料中評估及紀錄執行時間(enumerateWithEstimate)。  
+  建立一個評估函數，使其可再輸入資料中評估及紀錄執行時間(enumerateWithEstimate)。  
   在訓練之前預先將快取訓練資料存入硬碟空間中，以加速訓練速度，並減少記憶體使用率。  
     
 - 訓練結果  
 
+  此訓練使用平衡資料及資料增強函數，並迭代10次做模型訓練。結果如下：
+  ```
+  E1 trn      0.2103 loss,  91.1% correct, 0.9284 precision, 0.8901 recall, 0.9089 f1 score
+  E1 trn_neg  0.1939 loss,  93.1% correct (93139 of 100000)
+  E1 trn_pos  0.2267 loss,  89.0% correct (89010 of 100000)
+  ...
+  E1 val      0.0748 loss,  97.5% correct, 0.5260 precision, 0.9643 recall, 0.6807 f1 score
+  E1 val_neg  0.0744 loss,  97.5% correct (2844 of 2917)
+  E1 val_pos  0.0893 loss,  96.4% correct (81 of 84)
+  ...
+  E10 trn      0.0467 loss,  98.5% correct, 0.9845 precision, 0.9850 recall, 0.9848 f1 score
+  E10 trn_neg  0.0528 loss,  98.5% correct (98454 of 100000)
+  E10 trn_pos  0.0406 loss,  98.5% correct (98502 of 100000)
+  ...
+  E10 val      0.0595 loss,  97.8% correct, 0.5646 precision, 0.9881 recall, 0.7186 f1 score
+  E10 val_neg  0.0594 loss,  97.8% correct (2853 of 2917)
+  E10 val_pos  0.0617 loss,  98.8% correct (83 of 84)
+  ```
+  可以看到訓練後的模型表現不錯，在陽性及陰性的正確率都有97%以上。  
+  Tensorboard訓練頻估指標：  
+    
+  可以看出此訓練的損失有不斷下降的趨勢，但驗證的損失接近持平甚是有突然升高情形，  
+  研判此模型有些許的過渡適配，若繼續訓練會有反效果。  
+    
+  在預測的部份我們可以看到，此模型的準確率大概6~7成左右。  
+    
+  若要加強模型的表現，可以做以下修正：  
+  1.增加訓練樣本數，使用更多樣化的樣本作訓練減少過度適配，提高準確率。  
+  2.修改模型，增加模型參數，及使用Dropout，都可以讓模型減少過度適配現象。  
+  3.修改資料增強函數，讓本為少數的陽性樣本，在重複訓練時有更多的變化。  
   
 
 
