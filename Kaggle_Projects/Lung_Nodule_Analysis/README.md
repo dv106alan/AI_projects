@@ -308,26 +308,88 @@ Data Source：https://luna16.grand-challenge.org/
   ```
 - 訓練模型
   
-  模型參數的部分，Unet輸入通道為7個，輸出為二分類，Unet深度為3層，寬度係數為4，
-  輸出特徵圖的大小與輸入相同，解碼器部分上採樣的方法為上採樣卷積，使用批次標準化。
-  
   訓練批次為一次16個樣本，並進行資料擴增。
-  建立**初始化模型**(UNetWrapper, SegmentationAugmentation)，此處包含兩個模型，
+  建立**初始化模型**(UNetWrapper, SegmentationAugmentation)及**優化器(Adam)**，此處包含兩個模型，
   另一個資料擴增模型是為了利用GPU，將資料放入GPU中做處理。
+  **模型參數**的部分，Unet輸入通道為7個，輸出為二分類，Unet深度為3層，寬度係數為4，
+  輸出特徵圖的大小與輸入相同，解碼器部分上採樣的方法為上採樣卷積，使用批次標準化。
   建立**DataLoader**，包含訓練資料(train_dl)及驗證資料(val_dl)，訓練資料是取用全結節資料做訓練。
-
-
-  建立**初始化模型**(LunaModel)及**優化器(GCD)**，並將Model放置(平行)於GPU*2上。  
-  建立**DataLoader**，包含訓練資料(train_dl)及驗證資料(val_dl)。  
-  建立損失函數，這裡使用**交叉熵損失函數**，並使其返回每個樣本的損失值，  
-  將模型輸出之logits及資料Label輸入**計算損失**，並回傳損失。  
+  將模型及資料放置(平行)於GPU*2上。
+  建立**損失函數**，這裡使用**Dice Loss**，其算法相似於F1，是計算輸出結果及遮罩之重疊率，
+  一般Dice越大越好，為符合損失特性所以更改為1-Dice。
+  這裡損失的計算有兩個部分，找出所有陽性陰性像素+(找出陽性像素*8)，其意思在於找出陽性像素的重要性為8倍。
   將損失進行**反向傳播**，再使用優化器計算梯度**更新模型參數**(weights,bias)。  
   訓練設定為每5次訓練進行一次驗證。  
-  反覆迭代周期，完成模型訓練。  
+  反覆迭代周期，完成模型訓練。 
 
+  訓練使用**Tensorboard**來記錄訓練資訊，訓練資訊內容如下：  
+  **損失**：loss/all  
+  **比率**：percent_all/tp(真陽率), percent_all/fn(假陰率), percent_all/fp(假陽率)  
+  **預測**：pr/precision(準確率), pr/recall(招回率)  
+  **F1 score**：pr/f1_score
+  F1分數介於0～1之間，越大表示分類模型表現越好。  
+  這裡我們需要準確率及招回率皆上升才判定為良好模型。
+  **輸出遮罩圖**：記錄訓練之輸出分割遮罩
+    
+  建立一個評估函數，使其可再輸入資料中評估及紀錄執行時間(enumerateWithEstimate)。  
+  在訓練之前預先將快取訓練資料存入硬碟空間中，以加速訓練速度，並減少記憶體使用率。  
+
+- 訓練結果
+    
+  此訓練使用資料擴增，並迭代30次做訓練。訓練結果如下：
+  ```
+  E1 trn      0.8258 loss, 0.0996 precision, 0.9863 recall, 0.1809 f1 score
+  E1 trn_all  0.8258 loss,  98.6% tp,   1.4% fn,     892.1% fp
+  E1 val      0.9970 loss, 0.0015 precision, 0.9899 recall, 0.0030 f1 score
+  E1 val_all  0.9970 loss,  99.0% tp,   1.0% fn,   66551.1% fp
+  ...
+  E5 trn      0.6307 loss, 0.2218 precision, 0.9429 recall, 0.3591 f1 score
+  E5 trn_all  0.6307 loss,  94.3% tp,   5.7% fn,     330.8% fp
+  E5 val      0.9790 loss, 0.0083 precision, 0.8194 recall, 0.0164 f1 score
+  E5 val_all  0.9790 loss,  81.9% tp,  18.1% fn,    9837.2% fp
+  ...
+  E10 trn      0.4324 loss, 0.3507 precision, 0.9321 recall, 0.5097 f1 score
+  E10 trn_all  0.4324 loss,  93.2% tp,   6.8% fn,     172.5% fp
+  E10 val      0.9396 loss, 0.0190 precision, 0.7360 recall, 0.0371 f1 score
+  E10 val_all  0.9396 loss,  73.6% tp,  26.4% fn,    3793.6% fp
+  ...
+  E15 trn      0.3674 loss, 0.3974 precision, 0.9348 recall, 0.5577 f1 score
+  E15 trn_all  0.3674 loss,  93.5% tp,   6.5% fn,     141.7% fp
+  E15 val      0.9524 loss, 0.0168 precision, 0.8513 recall, 0.0329 f1 score
+  E15 val_all  0.9524 loss,  85.1% tp,  14.9% fn,    4987.7% fp
+  ...
+  E20 trn      0.3377 loss, 0.4259 precision, 0.9358 recall, 0.5854 f1 score
+  E20 trn_all  0.3377 loss,  93.6% tp,   6.4% fn,     126.1% fp
+  E20 val      0.9607 loss, 0.0131 precision, 0.8413 recall, 0.0257 f1 score
+  E20 val_all  0.9607 loss,  84.1% tp,  15.9% fn,    6351.3% fp
+  ...
+  E25 trn      0.3167 loss, 0.4515 precision, 0.9413 recall, 0.6103 f1 score
+  E25 trn_all  0.3167 loss,  94.1% tp,   5.9% fn,     114.3% fp
+  E25 val      0.9388 loss, 0.0163 precision, 0.7533 recall, 0.0319 f1 score
+  E25 val_all  0.9388 loss,  75.3% tp,  24.7% fn,    4548.2% fp
+  ...
+  E30 trn      0.3167 loss, 0.4676 precision, 0.9407 recall, 0.6247 f1 score
+  E30 trn_all  0.3167 loss,  94.1% tp,   5.9% fn,     107.1% fp
+  E30 val      0.9471 loss, 0.0188 precision, 0.8474 recall, 0.0368 f1 score
+  E30 val_all  0.9471 loss,  84.7% tp,  15.3% fn,    4425.2% fp
+  ```
+  我們可以看到第一次訓練招回率最好，是因為預測幾乎覆蓋整個像素，假陽率高達6萬多，所以不是真的好。  
+  以平均來說，第10次及30次有較好的數值，參考loss, tp, fp, recall, precision, f1 score...  
+  此訓練並不理想，真陽的預測最高為84%，假陽率高達4425%，表示輸出充滿預測錯誤的區塊。  
+  若要改進訓練結果必須要增加樣本數，或是加大模型深度，但是侷限於平台能力，無法再擴充訓練樣本(空間不足)，  
+  所以就以此作為結節影像分割之模型。  
+
+  可以看出訓練損失下降，但驗證損失卻只有緩慢下降。
+
+  可以看出訓練及預測的數值差距甚大，有可能是模型無法有效學習或是樣本數太少導致學習成效不佳。  
+  但是並非無法使用，其準確率也有84%，表示在分割圖像中有涵蓋到84%的真結節，  
+  我們希望能覆蓋越多越好，但fp高也會發生較多判斷上的混淆。  
+  以此結果可以交給分類模型做判斷。
+  
   
 
-
+  
+  
 
 
 
