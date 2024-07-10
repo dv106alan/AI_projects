@@ -7,7 +7,7 @@ Data Source：https://luna16.grand-challenge.org/
 此專案主要目的是要從CT掃描圖片中，辨識出肺結節並加以分析是否為惡性結節。  
 
 本專案將作業切分為四個部分，分別為：  
-- **[肺結節分類](./README.md)**	-         建立可處理3D-CT影像之CNN模型，並載入結節資料加以訓練。  
+- **[肺結節分類](./nodule-detection-of-luna-pytorch.ipynb)**	-         建立可處理3D-CT影像之CNN模型，並載入結節資料加以訓練。  
 - **[結節影像切割](./image-segmentation-of-luna-pytorch)** -  建立Unet影像分割模型，將資料處理為2D批次圖像作為輸入資料格式，並載入結節資料訓練模型。  
 - **[惡性結節分類](./malignancy-predict-of-luna-pytorch.ipynb)** -       使用結節分類模型並作遷移訓練，載入惡性結節資料並做訓練。  
 - **[整合模型並分析](./README.md)** -       整合上述3個模型，建立CT掃描程序，並加以分析。  
@@ -23,8 +23,11 @@ Data Source：https://luna16.grand-challenge.org/
 
 </details>
 
-## 程式說明1 - 肺結節分類
-
+## 程式說明1 - 肺結節分類  
+  
+<details>
+<summary>集點查看詳細內容</summary>
+  
 - Core: GPU T4 x2
     
 程式項目內容：
@@ -80,7 +83,7 @@ Data Source：https://luna16.grand-challenge.org/
   整理後資料**輸出為結節張量、是否為結節標籤、序號、中心位置張量**
 
   查看結節樣本資料，顯示CT之三軸視角，及擷取結節的索引圖像：
-  <img src="./imgs/1_ct_view.png" width="100%">  
+  <img src="./imgs/1_ct_view.jpg" width="100%">  
     
     
 - 建立模型
@@ -176,9 +179,12 @@ Data Source：https://luna16.grand-challenge.org/
   E10 val_neg  0.0594 loss,  97.8% correct (2853 of 2917)
   E10 val_pos  0.0617 loss,  98.8% correct (83 of 84)
   ```
-  可以看到訓練後的模型表現不錯，在陽性及陰性的正確率都有97%以上。  
-  Tensorboard訓練頻估指標：  
+  可以看到訓練後的模型表現不錯，在陽性及陰性的正確率都有97%以上。
     
+  Tensorboard訓練頻估指標：  
+
+  <img src="./imgs/1_ct_view.jpg" width="100%"> 
+  
   可以看出此訓練的損失有不斷下降的趨勢，但驗證的損失接近持平甚是有突然升高情形，  
   研判此模型有些許的過渡適配，若繼續訓練會有反效果。  
     
@@ -187,10 +193,14 @@ Data Source：https://luna16.grand-challenge.org/
   若要加強模型的表現，可以做以下修正：  
   1.增加訓練樣本數，使用更多樣化的樣本作訓練減少過度適配，提高準確率。  
   2.修改模型，增加模型參數，及使用Dropout，都可以讓模型減少過度適配現象。  
-  3.修改資料擴增函數，讓本為少數的陽性樣本，在重複訓練時有更多的變化。  
-  
+  3.修改資料擴增函數，讓本為少數的陽性樣本，在重複訓練時有更多的變化。
 
-## 程式說明2 - 結節影像切割
+</details>
+
+## 程式說明2 - 結節影像切割  
+
+<details>  
+<summary>集點查看詳細內容</summary>  
   
 - Core: GPU T4 x2  
   
@@ -403,9 +413,13 @@ Data Source：https://luna16.grand-challenge.org/
   我們希望能覆蓋越多越好，但fp高也會發生較多判斷上的混淆。  
   以此結果可以交給分類模型做判斷。
   
+</details>
   
 ## 程式說明3 - 惡性結節分類  
-
+  
+<details>  
+<summary>集點查看詳細內容</summary>  
+  
 - Core: GPU T4 x2  
 
 程式項目內容：  
@@ -615,7 +629,8 @@ Data Source：https://luna16.grand-challenge.org/
   <img src="./imgs/3_tb_pre.png" width="100%">  
     
   可以看出趨勢線都有收斂的趨勢，雖然有一些小問題但不影響結果。
-  
+
+</details>
   
 
 <!--
