@@ -498,13 +498,90 @@ Data Source：https://luna16.grand-challenge.org/
   ----------------------------------------------------------------
   ```
 - 訓練模型  
+
+  此訓練將批次大小設定為32，並加上資料擴增功能。
+  因為為遷移訓練，我們不將模型重新訓練，故此我們載入之前訓練好的模型權重，
+  此處加上要重新訓練的層數變數，可以決定從最後數來幾層要重新訓練，
+  其餘訓練設定皆與結節模型訓練相同。
+
+  訓練使用**Tensorboard**來記錄訓練資訊，訓練資訊內容如下：  
+  **損失**：loss/all, loss/neg, loss/pos  
+  **準確率**：correct/all, correct/neg, correct/pos  
+  **預測**：pr/precision(準確率), pr/recall(招回率)  
+  **F1 score**: pr/f1_score, 公式為 2*(precision*recall)/(precision+recall)
+  **AUC**: auc, 計算準確率
   
-
+  建立一個評估函數，使其可再輸入資料中評估及紀錄執行時間(enumerateWithEstimate)。  
+  在訓練之前預先將快取訓練資料存入硬碟空間中，以加速訓練速度，並減少記憶體使用率。  
   
+- 訓練結果
+  此訓練進行兩次訓練，並比較二者差異：
+  第一次訓練，深度為1，進行10次迭代，運行結果：
+  ```
+  ...
+  E1 trn      0.9152 loss,  65.8% correct, 0.6590 precision, 0.6535 recall, 0.6562 f1 score, 0.7059 auc
+  E1 trn_ben  0.9288 loss,  66.2% correct (33091 of 50000)
+  E1 trn_mal  0.9017 loss,  65.3% correct (32674 of 50000)
+  ...
+  E1 val      0.8192 loss,  69.7% correct, 0.5333 precision, 0.6400 recall, 0.5818 f1 score, 0.7863 auc
+  E1 val_ben  0.7210 loss,  72.5% correct (37 of 51)
+  E1 val_mal  1.0195 loss,  64.0% correct (16 of 25)
+  ...
+  E5 trn      0.5714 loss,  79.7% correct, 0.8173 precision, 0.7662 recall, 0.7909 f1 score, 0.8665 auc
+  E5 trn_ben  0.6215 loss,  82.9% correct (41436 of 50000)
+  E5 trn_mal  0.5212 loss,  76.6% correct (38311 of 50000)
+  ...
+  E5 val      0.5783 loss,  73.7% correct, 0.5714 precision, 0.8000 recall, 0.6667 f1 score, 0.8475 auc
+  E5 val_ben  0.6140 loss,  70.6% correct (36 of 51)
+  E5 val_mal  0.5054 loss,  80.0% correct (20 of 25)
+  ...
+  E10 trn      0.4873 loss,  81.0% correct, 0.8242 precision, 0.7882 recall, 0.8058 f1 score, 0.8916 auc
+  E10 trn_ben  0.5309 loss,  83.2% correct (41594 of 50000)
+  E10 trn_mal  0.4436 loss,  78.8% correct (39408 of 50000)
+  ...
+  E10 val      0.4892 loss,  77.6% correct, 0.6250 precision, 0.8000 recall, 0.7018 f1 score, 0.8824 auc
+  E10 val_ben  0.5470 loss,  76.5% correct (39 of 51)
+  E10 val_mal  0.3712 loss,  80.0% correct (20 of 25)
+  ```
+  良性正確率為76.5%，惡性正確率為80%，AUC為0.88
+  比直接使用直徑大小判斷稍微差。
 
-- 訓練模型  
+  第二次訓練，深度為2，進行10次迭代，運行結果：
+  ```
+  E1 trn      0.3278 loss,  86.0% correct, 0.8692 precision, 0.8476 recall, 0.8583 f1 score, 0.9384 auc
+  E1 trn_ben  0.3342 loss,  87.2% correct (43624 of 50000)
+  E1 trn_mal  0.3215 loss,  84.8% correct (42380 of 50000)
+  ...
+  E1 val      0.4296 loss,  89.5% correct, 0.7742 precision, 0.9600 recall, 0.8571 f1 score, 0.9400 auc
+  E1 val_ben  0.5777 loss,  86.3% correct (44 of 51)
+  E1 val_mal  0.1275 loss,  96.0% correct (24 of 25)
+  ...
+  E5 trn      0.2077 loss,  91.1% correct, 0.9090 precision, 0.9139 recall, 0.9115 f1 score, 0.9735 auc
+  E5 trn_ben  0.2174 loss,  90.8% correct (45425 of 50000)
+  E5 trn_mal  0.1980 loss,  91.4% correct (45697 of 50000)
+  ...
+  E5 val      0.4635 loss,  86.8% correct, 0.7273 precision, 0.9600 recall, 0.8276 f1 score, 0.9361 auc
+  E5 val_ben  0.6165 loss,  82.4% correct (42 of 51)
+  E5 val_mal  0.1513 loss,  96.0% correct (24 of 25)
+  ...
+  E10 trn      0.1637 loss,  93.2% correct, 0.9278 precision, 0.9378 recall, 0.9328 f1 score, 0.9837 auc
+  E10 trn_ben  0.1735 loss,  92.7% correct (46351 of 50000)
+  E10 trn_mal  0.1539 loss,  93.8% correct (46888 of 50000)
+  ...
+  E10 val      0.5272 loss,  84.2% correct, 0.6970 precision, 0.9200 recall, 0.7931 f1 score, 0.9208 auc
+  E10 val_ben  0.6930 loss,  80.4% correct (41 of 51)
+  E10 val_mal  0.1889 loss,  92.0% correct (23 of 25)
+  ```
+  良性正確率為80.4%，惡性正確率為92%，AUC為0.92
+  比之前的訓練表現更好。
 
+- 訓練結果分析：
+  載入兩次的訓練參數，並輸入驗證資料進行預測，使用預測結果繪製ROC曲線及AUC，結果如下：
+  直徑分類與第一次訓練相比，可以看出模型AUC只有0.82，比未訓練0.88還低
 
+  加入第二次訓練，三次結果相比，可以看出訓練兩層的結果ACU 0.94，優於前兩次預測結果!
+
+  使用第二次訓練結果，作為惡性結節分類模型。
 
 
 <!--
