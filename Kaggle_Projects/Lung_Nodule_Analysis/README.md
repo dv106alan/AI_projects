@@ -156,7 +156,8 @@ Data Source：https://luna16.grand-challenge.org/
   **預測**：pr/precision(準確率), pr/recall(招回率)  
   **F1 score**: pr/f1_score, 公式為 2*(precision*recall)/(precision+recall)  
   F1分數介於0～1之間，越大表示分類模型表現越好。  
-  這裡我們需要準確率及招回率皆上升才判定為良好模型。  
+  <img src="./imgs/1_f1.png" width="30%">  
+  這裡我們需要**準確率及招回率皆上升**才判定為良好模型。  
     
   建立一個評估函數，使其可再輸入資料中評估及紀錄執行時間(enumerateWithEstimate)。  
   在訓練之前預先將快取訓練資料存入硬碟空間中，以加速訓練速度，並減少記憶體使用率。  
