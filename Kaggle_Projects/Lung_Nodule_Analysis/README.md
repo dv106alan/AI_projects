@@ -655,31 +655,103 @@ Data Source：https://luna16.grand-challenge.org/
 
 - 資料處理
     
-  將之前訓練的資料取出，包含所有結節資料及非結節資料共取300000筆。
-  其餘參數資料與之前程式相同，
-  將每筆資料打包成一個**Ct**(class)
-
-- **建立Dataset**
+  將之前訓練的資料取出，包含**所有結節資料及非結節資料**共取**300000筆**。  
+  其餘參數資料與之前程式相同，  
+  將每筆資料打包成一個**Ct**(class)  
     
-  因為這裡有用到所有模型，所以須匯入前3個模型之Dataset，
-  不需再對其作修改。
+- **建立Dataset**  
+    
+  因為這裡有用到所有模型，所以須匯入前3個模型之Dataset，  
+  不需再對其作修改。  
+    
+  查看CT資料：  
 
-  查看CT資料：
-
-- **建立模型**
-
-  有三個模型，需用到三個模型程式，但是分類模型用的架構是同一個，所以這裡匯入模型為：
-  - 結節分類模型
-  - 影像分割模型
-
+- **建立模型**  
+    
+  有三個模型，需用到三個模型程式，但是分類模型用的架構是同一個，所以這裡匯入模型為：  
+  - 結節分類模型  
+  - 影像分割模型  
+    
 - **載入快取**
+    
+  在執行預測程式前，執行快取載入程式，將快取資料載入硬碟中，以避免記憶體耗盡問題。  
 
-  在執行預測程式前，執行快取載入程式，將快取資料載入硬碟中，以避免記憶體耗盡問題。
+- **建立分析程式**
+    
+  此程式整合三個模型，分別為：  
+  - 結節影像分割模型  
+  - 結節分類模型  
+  - 惡性結節分類模型  
+    
+  初始化模型，將三個模型之權重資料載入模型中。  
+  建立資料集，取出所有驗證樣本資料，確保資料來源未經過訓練。  
+  使用所有驗證資料做預測，將所有驗證資料之序號依序輸入模型中。  
+  建立遮罩圖像分割程式，此程式會將遮罩圖像分組，使其成為多筆結節資料。  
+  建立混淆矩陣函數，將結果記錄於函式中並顯示。  
+    
+  資料輸入模型流程：  
+  1.取得CT序號，並將資料打包成Ct(class)型態資料。  
+  2.使用分割模型資料及取得一筆資料集，輸入**結節影像分割模型**中進行預測。  
+  3.將分割輸出結果放入遮罩分割程式，處理為一筆一筆的結節資料。  
+  4.將這些結節資料整理為結節分類資料集之Dataloader。  
+  5.將資料依序放入**結節分類模型**及**惡性結節預測模型**做處理。  
+  6.過濾掉機率小於0.5的結節預測資料。  
+  7.將預測結果輸入混淆矩陣中，並印出每筆結果。
+  8.所有資料預測完後，印出所有統計結果。
 
+  **一共輸入52張CT影像資料，總共耗時21分鐘，預測結果如下**：
+  這裡總共做了3個預測，但是結果只有些微差距。所以就拿第一個預測做說明：  
+  ```
+  30136 validation samples, 30064 neg, 72 pos, unbalanced ratio
   
-  
-  
+  1 general series, 481 slices, 0 nodules
+  1415 training samples, 1415 neg, 0 pos, unbalanced ratio
+  1.3.6.1.4.1.14519.5.2.1.6279.6001.100332161840553388986847034053
+                 |    Complete Miss |     Filtered Out |     Pred. Benign |  Pred. Malignant
+     Non-Nodules |                  |             1393 |               16 |                6
+          Benign |                0 |                0 |                0 |                0
+       Malignant |                0 |                0 |                0 |                0
 
+  1 general series, 280 slices, 1 nodules
+  1633 training samples, 1633 neg, 0 pos, unbalanced ratio
+  1.3.6.1.4.1.14519.5.2.1.6279.6001.104562737760173137525888934217
+                 |    Complete Miss |     Filtered Out |     Pred. Benign |  Pred. Malignant
+     Non-Nodules |                  |             1619 |                9 |                4
+          Benign |                0 |                0 |                0 |                0
+       Malignant |                0 |                0 |                0 |                1
+
+  1 general series, 633 slices, 1 nodules
+  3432 training samples, 3432 neg, 0 pos, unbalanced ratio
+  1.3.6.1.4.1.14519.5.2.1.6279.6001.110678335949765929063942738609
+                 |    Complete Miss |     Filtered Out |     Pred. Benign |  Pred. Malignant
+     Non-Nodules |                  |             3333 |               61 |               31
+          Benign |                0 |                0 |                0 |                0
+       Malignant |                0 |                0 |                0 |                1
+  ...
+  1 general series, 119 slices, 1 nodules
+  674 training samples, 674 neg, 0 pos, unbalanced ratio
+  1.3.6.1.4.1.14519.5.2.1.6279.6001.861997885565255340442123234170
+                 |    Complete Miss |     Filtered Out |     Pred. Benign |  Pred. Malignant
+     Non-Nodules |                  |              652 |               20 |                2
+          Benign |                1 |                0 |                0 |                0
+       Malignant |                0 |                0 |                0 |                0
+
+  1 general series, 238 slices, 2 nodules
+  1134 training samples, 1134 neg, 0 pos, unbalanced ratio
+  1.3.6.1.4.1.14519.5.2.1.6279.6001.935683764293840351008008793409
+                 |    Complete Miss |     Filtered Out |     Pred. Benign |  Pred. Malignant
+     Non-Nodules |                  |             1108 |               19 |                4
+          Benign |                0 |                0 |                0 |                1
+       Malignant |                0 |                0 |                0 |                1
+
+
+  Total
+                 |    Complete Miss |     Filtered Out |     Pred. Benign |  Pred. Malignant
+     Non-Nodules |                  |            64955 |             1093 |              340
+          Benign |                9 |                0 |               29 |                6
+       Malignant |                7 |                0 |                2 |               19
+  ```
+  
 
 
 
