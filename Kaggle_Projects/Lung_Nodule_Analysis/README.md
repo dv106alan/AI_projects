@@ -182,9 +182,13 @@ Data Source：https://luna16.grand-challenge.org/
   可以看到訓練後的模型表現不錯，在陽性及陰性的正確率都有97%以上。
     
   Tensorboard訓練頻估指標：  
-
-  <img src="./imgs/1_ct_view.jpg" width="100%"> 
-  
+    
+  <img src="./imgs/1_tb_corr.png" width="100%">  
+    
+  <img src="./imgs/1_tb_loss.png" width="100%">  
+    
+  <img src="./imgs/1_tb_pre.png" width="100%">  
+    
   可以看出此訓練的損失有不斷下降的趨勢，但驗證的損失接近持平甚是有突然升高情形，  
   研判此模型有些許的過渡適配，若繼續訓練會有反效果。  
     
