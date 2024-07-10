@@ -9,7 +9,7 @@ Data Source：https://luna16.grand-challenge.org/
 本專案將作業切分為四個部分，分別為：  
 - **[肺結節分類](./README.md)**	-         建立可處理3D-CT影像之CNN模型，並載入結節資料加以訓練。  
 - **[結節影像切割](./README.md)** -  建立Unet影像分割模型，將資料處理為2D批次圖像作為輸入資料格式，並載入結節資料訓練模型。  
-- **[惡性結節分類](./README.md)** -       使用結節分類模型並作遷移訓練，載入惡性結節資料並做訓練。  
+- **[惡性結節分類](./malignancy-predict-of-luna-pytorch.ipynb)** -       使用結節分類模型並作遷移訓練，載入惡性結節資料並做訓練。  
 - **[整合模型並分析](./README.md)** -       整合上述3個模型，建立CT掃描程序，並加以分析。  
 
 #### LUNA Grand Challenge 簡介
