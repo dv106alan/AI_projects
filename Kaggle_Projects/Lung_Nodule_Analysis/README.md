@@ -583,17 +583,17 @@ Data Source：https://luna16.grand-challenge.org/
   加入第二次訓練，三次結果相比，可以看出訓練兩層的結果ACU 0.94，優於前兩次預測結果!  
   <img src="./imgs/3_roc3.png" width="50%">  
   使用第二次訓練結果，作為惡性結節分類模型。  
-
-  **訓練結果趨勢**
-  AUC  
-  <img src="./imgs/3_tb_auc.png" width="100%">  
-  CURRECT  
+    
+  **訓練結果趨勢線**  
+      
+  <img src="./imgs/3_tb_auc.png" width="35%">  
+      
   <img src="./imgs/3_tb_corr.png" width="100%">  
-  LOSS  
+      
   <img src="./imgs/3_tb_loss.png" width="100%">  
-  PREDICT  
-  <img src="./imgs/3_tb_pre.png" width="100%">
-
+      
+  <img src="./imgs/3_tb_pre.png" width="100%">  
+    
   可以看出趨勢線都有收斂的趨勢，雖然有一些小問題但不影響結果。
   
   
