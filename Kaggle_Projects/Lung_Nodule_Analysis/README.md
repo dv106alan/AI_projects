@@ -664,8 +664,11 @@ Data Source：https://luna16.grand-challenge.org/
   因為這裡有用到所有模型，所以須匯入前3個模型之Dataset，  
   不需再對其作修改。  
     
-  查看CT資料：  
+  查看CT資料：
+    
+  <img src="./imgs/4_ct_view.jpg" width="100%">  
 
+    
 - **建立模型**  
     
   有三個模型，需用到三個模型程式，但是分類模型用的架構是同一個，所以這裡匯入模型為：  
