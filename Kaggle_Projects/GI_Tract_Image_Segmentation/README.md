@@ -1,11 +1,24 @@
-## 水稻影像識別分類 (Rice Image Classification) (Pytorch)  
-Data source：Rice Image Dataset, [https://kaggle.com/competitions/global-wheat-detection](https://www.kaggle.com/datasets/muratkokludataset/rice-image-dataset)  
+## 胃腸道影像分割 (UW-Madison GI Tract Image Segmentation) (U-Net) (Pytorch)  
+Data source：happyharrycn, Maggie, Phil Culliton, Poonam Yadav, Sangjune Laurence Lee. (2022). UW-Madison GI Tract Image Segmentation . Kaggle. https://kaggle.com/competitions/uw-madison-gi-tract-image-segmentation
+  
+- **Core**: GPU P100  
 
-- **Core**: GPU T4 x2  
+### 專案目的
 
-**此專案使用 CNN 模型對水稻品種進行分類。**  
+**此專案目的在於辨識出腹部MRI(核磁共振)影像中，腸胃道(大腸、小腸、胃)的位置**。
+我們需要將**不規則的區域**辨識並標示出來，為達到此目的，我們需要用到**影像分割模型**。
+這裡使用廣泛用於醫療上的**U-Net模型**做影像分割及標注。
 
-- **資料集內容為：**  
+### 背景描述
+<details open>
+<summary>點擊展開說明</summary><br>
+
+2019年，全球估計有500萬人被診斷出患有胃腸道癌症。在這些患者中，大約一半有資格接受放射治療，通常每天進行 10-15 分鐘，持續 1-6 週。放射腫瘤科醫師嘗試使用 X 射線束針對腫瘤提供高劑量的放射，同時避開胃和腸道。借助整合磁振造影和直線加速器系統（也稱為 MR-Linacs）等新技術，腫瘤學家能夠可視化腫瘤和腸道的日常位置，這些位置每天都在變化。在這些掃描中，放射腫瘤科醫師必須手動勾勒出胃和腸的位置，以便調整 X 射線束的方向，以增加向腫瘤傳遞的劑量並避開胃和腸。這是一個耗時且費力的過程，可能會將治療時間從每天 15 分鐘延長到每天 1 小時，這對於患者來說可能難以忍受，除非深度學習可以幫助自動化分割過程。分割胃和腸的方法將使治療更快，並使更多的患者獲得更有效的治療。
+  
+</details>
+
+
+- **資料內容：**  
   
   • 水稻圖片包含**Arborio、Basmati、Ipsala、Jasmine 和Karacadag** 五種稻米品種。  
   • 資料集(1) 有**75K 張影像**，其中每個水稻品種有15K 張影像。
