@@ -1,5 +1,5 @@
 ## 胃腸道影像分割 (UW-Madison GI Tract Image Segmentation) (U-Net) (Pytorch)  
-Data source：happyharrycn, Maggie, Phil Culliton, Poonam Yadav, Sangjune Laurence Lee. (2022). UW-Madison GI Tract Image Segmentation . Kaggle. https://kaggle.com/competitions/uw-madison-gi-tract-image-segmentation
+Data source：happyharrycn, Maggie, Phil Culliton, Poonam Yadav, Sangjune Laurence Lee. (2022). UW-Madison GI Tract Image Segmentation . Kaggle. https://kaggle.com/competitions/uw-madison-gi-tract-image-segmentation  
   
 - **Core**: GPU P100  
 
@@ -17,21 +17,81 @@ Data source：happyharrycn, Maggie, Phil Culliton, Poonam Yadav, Sangjune Lauren
   
 </details>
 
-
-- **資料內容：**  
+### 資料內容  
   
-  • 水稻圖片包含**Arborio、Basmati、Ipsala、Jasmine 和Karacadag** 五種稻米品種。  
-  • 資料集(1) 有**75K 張影像**，其中每個水稻品種有15K 張影像。
+MRI掃描資料來自實際的癌症患者，他們在放射治療期間的不同日期進行了 1-5 次 MRI 掃描。
+訓練註解以 RLE 編碼遮罩形式提供，影像採用 16 位元灰階 PNG 格式。
+大約有 50 個案例，天數和切片數各不相同。每個案例都由多組掃描切片代表（每組由掃描發生的日期標識）。
+有些案例按時間劃分，而有些案例則按案例劃分 - 資料未區分訓練或測試資料。
+  
+影像檔案名稱包含 4 個數字（例如276_276_1.63_1.63.png）。
+這四個數字是切片寬度/高度（以像素為單位的整數）和寬度/高度像素間距（以毫米為單位的浮點數）。
+前兩個定義投影片的解析度。最後兩項記錄每個像素的物理尺寸。
 
+資料總共包含**38496個樣本**，分別**標註為大腸、小腸、胃**
+  
+### 專案使用資源
 
+wandb：幫助紀錄訓練資料並加以統計。  
+scikit-learn：使用內部所提供的StratifiedKFold等資料庫，有助於折疊整理資料。  
+albumentations：協助產生資料擴增功能。
+segmentation_models_pytorch：使用其所提供的U-Net模型。
+RLE：使用RLE進行資料壓縮，包含編碼及解碼功能。
+
+### 執行步驟說明
+  
+- 資料處理  
+
+  建立Database，我們使用Wandb作為訓練資料儲存及統計工具，需要API才可使用。
+  ```
+  Wandb (Weights & Biases)
+  Weights & Biases (W&B) is MLOps platform for tracking our experiemnts. We can use it to Build better models faster with experiment tracking, dataset versioning, and model management. Some of the cool features of W&B:
+  
+  Track, compare, and visualize ML experiments
+  Get live metrics, terminal logs, and system stats streamed to the centralized dashboard.
+  Explain how your model works, show graphs of how model versions improved, discuss bugs, and demonstrate progress towards milestones.
+  ```
     
-**摘要**
-<details open>
-<summary>點擊展開說明</summary><br>
+  建立設定參數及設定亂數種子。  
+  讀取統計資料並建立所需的資料表，並區分空值及非空值的資料。  
+  <img src="./imgs/uw_bar.png" width="50%">  
+    
+  建立遮罩產生函數(使用RLE解碼成遮罩)及影像顯示函數。
+  折疊資料，將區分的資料折疊為五個資料夾
+  ```
+  fold  empty
+  0.0   False    3257
+        True     4551
+  1.0   False    3540
+        True     4540
+  2.0   False    3053
+        True     3923
+  3.0   False    3407
+        True     4801
+  4.0   False    3333
+        True     4091
+  Name: id, dtype: int64
+  ```
 
-稻米是世界上生產最廣泛的糧食產品之一，有許多遺傳品種。這些品種由於它們的某些特徵而彼此分開。這些通常是紋理、形狀和顏色等特徵。利用這些區分稻米品種的特徵，可以對種子的品質進行分類和評估。在這項研究中，使用了土耳其經常種植的五種不同的稻米品種：Arborio、Basmati、Ipsala、Jasmine 和 Karacadag。資料集中包含總共 75,000 張穀物影像，其中每個品種 15,000 張。
+- 建立Dataset
+
+  依照上述所建立的資料表及遮罩功能讀取資料，建立資料列表，
+  並回傳**圖片張量、遮罩張量**
+
+  若傳入資料擴增函數則進行資料擴增後回傳資料。
+
+- 建立資料處理及擴增
   
-</details>
+  功能包含改變大小、隨機水平翻轉、隨機旋轉、隨機變形及隨機加入噪點。
+
+- 建立Dataloader
+
+  
+    
+  
+  
+
+
 
 **執行步驟說明：**  
     
