@@ -4,22 +4,22 @@
 #### -車流量監視 - Project-Car_counter  
   &nbsp;&nbsp;說明：辨識馬路之汽車，並計算車流量。
      
-   ![image](https://github.com/dv106alan/AI_projects/blob/main/Computer_Vision/Project-Car_counter/car_counter.png?raw=true)  
+   ![image](https://github.com/dv106alan/AI_projects/blob/main/Computer_Vision/Project-Car_counter/car_counter.jpg?raw=true)  
   
 #### -商場人流監視  
   &nbsp;&nbsp;說明：辨識人在電扶梯上行及下行，並做上下行人流量計算。
      
-   ![image](https://raw.githubusercontent.com/dv106alan/AI_projects/main/Computer_Vision/Project-People_counter/people_counter.png)  
+   ![image](https://raw.githubusercontent.com/dv106alan/AI_projects/main/Computer_Vision/Project-People_counter/people_counter.jpg)  
   
 ##### -工作安全監控  
   &nbsp;&nbsp;說明：載入工地安全辨識樣本，重新訓練Yolo模型，使其能辨識工地安全，並使用openCV將未戴安全帽、未穿背心等違反安全性之特徵標記出來。
      
-   ![image](https://raw.githubusercontent.com/dv106alan/AI_projects/main/Computer_Vision/Project-PPE_detection/ppe_detect.png)  
+   ![image](https://raw.githubusercontent.com/dv106alan/AI_projects/main/Computer_Vision/Project-PPE_detection/ppe_detect.jpg)  
   
 #### -樸克牌手牌辨識  
   &nbsp;&nbsp;說明：將樸克牌樣本輸入並訓練模型，製作手牌辨識程式，使其可辨識出手牌中最大的組合。
      
-   ![image](https://raw.githubusercontent.com/dv106alan/AI_projects/main/Computer_Vision/Project-PokerHand_detector/poker_detect.png)  
+   ![image](https://raw.githubusercontent.com/dv106alan/AI_projects/main/Computer_Vision/Project-PokerHand_detector/poker_detect.jpg)  
   
   
 ## 模型建立專案  
